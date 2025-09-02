@@ -1,0 +1,13 @@
+.bg-hero {
+    background-image: url("/images/Group 70.webp");
+    background-size: cover;
+    background-position: center;
+}
+
+.bg-hero-tentang {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("/images/Group 70@2x.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}

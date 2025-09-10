@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container w-full min-h-screen px-4 mx-auto sm:px-6 lg:px-10">
-        <h1 class="mb-6 text-xl font-bold sm:text-2xl">Edit Tentang Kami</h1>
+        <h1 class="mb-6 text-xl font-bold sm:text-2xl mt-20 lg:mt-0">Edit Tentang Kami</h1>
 
         @if (session('success'))
             <div class="px-4 py-3 mb-6 text-green-400 bg-green-100 border border-green-700 rounded">

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Map;
+use App\Mail\ContactMail;
 use Illuminate\Http\Request;
 use App\Models\ContactMessage;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -30,6 +32,8 @@ class ContactController extends Controller
             'message' => $validated['message'],
             'read' => false,
         ]);
+
+        Mail::to('saefulamin574@gmail.com')->send(new ContactMail($validated));
 
         return back()->with('success', 'Terima kasih! Pesan Anda telah kami terima.');
     }

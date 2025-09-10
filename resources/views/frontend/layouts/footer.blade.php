@@ -1,4 +1,4 @@
-<footer class="py-8 px-16 text-white bg-black sm:py-10">
+<footer class="py-8 text-white bg-black sm:py-10">
     <div class="grid grid-cols-1 gap-6 px-4 mx-auto max-w-7xl sm:grid-cols-2 md:grid-cols-4 sm:gap-8">
         <!-- Kolom 1: Tasty Food -->
         <div class="md:col-span-1">

@@ -29,13 +29,13 @@
                             {{ old('is_published', $news->is_published ?? false) ? 'checked' : '' }}>
                         <label for="is_published" class="font-semibold">Publikasikan</label>
                     </div>
+                    <button type="submit" class="px-6 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+                        Simpan Berita
+                    </button>
+                    <a href="{{ route('admin.news.index') }}" class="inline-block px-6 py-2 text-sm text-blue-600 border border-blue-600 rounded hover:bg-blue-600 hover:text-white">
+                        Kembali
+                    </a>
                 </div>
-            </div>
-
-            <div>
-                <button type="submit" class="px-6 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
-                    Simpan Berita
-                </button>
             </div>
         </div>
     </form>

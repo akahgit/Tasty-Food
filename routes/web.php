@@ -20,15 +20,14 @@ Route::get('/berita', [FrontendController::class, 'berita'])->name('frontend.ber
 Route::get('/berita/{id}', [FrontendController::class, 'detailBerita'])->name('frontend.berita.detail');
 Route::get('/galery', [FrontendController::class, 'gallery'])->name('frontend.galery');
 Route::get('/kontak', [ContactController::class, 'create'])->name('kontak.create');
-Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.store');
+Route::post('/kontak', [ContactController::class, 'store'])->name('kontak.store')->middleware('throttle:5,1');
 
 // Redirect setelah login
 Route::get('/dashboard', function () {
-    if (auth()->check()) {
-        if (auth()->user()->role === 'admin') {
-            return redirect('/admin/dashboard');
-        }
+    if (Auth::check() && Auth::user()->role === 'admin') {
+        return redirect('/admin/dashboard');
     }
+
     return redirect('/');
 })->middleware('auth')->name('dashboard');
 

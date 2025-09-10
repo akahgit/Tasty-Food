@@ -7,15 +7,17 @@
     <title>@yield('title') | Admin Dashboard</title>
     @vite('resources/css/app.css')
     <style>
-        .font-family-karla { font-family: karla; }
-        .bg-sidebar { background: #3d68ff; }
-        .cta-btn { color: #3d68ff; }
-        .upgrade-btn { background: #1947ee; }
-        .upgrade-btn:hover { background: #0038fd; }
-        .active-nav-link { background: #1947ee; }
-        .nav-item:hover { background: #1947ee; }
-        .account-link:hover { background: #3d68ff; }
-    </style>
+    .font-family-karla { font-family: karla; }    .bg-sidebar { 
+        background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+    }
+    .cta-btn { color: #3d68ff; }
+    .upgrade-btn { background: #1947ee; }
+    .upgrade-btn:hover { background: #0038fd; }
+    .active-nav-link { background: rgba(25, 71, 238, 0.9); }
+    .nav-item:hover { background: rgba(25, 71, 238, 0.8); }
+    .account-link:hover { color: #3d68ff; }
+</style>
+
 </head>
 
 <body class="font-sans bg-gray-100">

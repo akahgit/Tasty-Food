@@ -22,23 +22,6 @@
             @endif
         </div>
 
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between sm:space-x-6">
-            <div>
-                <p class="text-sm leading-5 text-gray-800 dark:text-gray-800">
-                    {!! __('Showing') !!}
-                    @if ($paginator->firstItem())
-                        <span class="font-medium">{{ $paginator->firstItem() }}</span>
-                        {!! __('to') !!}
-                        <span class="font-medium">{{ $paginator->lastItem() }}</span>
-                    @else
-                        {{ $paginator->count() }}
-                    @endif
-                    {!! __('of') !!}
-                    <span class="font-medium">{{ $paginator->total() }}</span>
-                    {!! __('results') !!}
-                </p>
-            </div>
-
             <div>
                 <span class="relative z-0 inline-flex rounded-md shadow-sm rtl:flex-row-reverse">
                     {{-- Previous Page Link --}}

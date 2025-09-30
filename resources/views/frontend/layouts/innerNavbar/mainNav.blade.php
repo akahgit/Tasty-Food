@@ -1,4 +1,4 @@
-<header class="absolute top-0 left-0 z-20 w-full px-5 py-16 text-white bg-tansparent">
+<header class="absolute top-0 left-0 z-20 w-full px-3 lg:px-10 py-16 text-white bg-tansparent">
     <div class="flex items-center justify-between w-full px-6 py-4">
         <!-- Logo + toggle -->
         <div class="flex items-center justify-between w-full sm:w-auto">

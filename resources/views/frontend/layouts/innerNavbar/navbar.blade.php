@@ -21,7 +21,7 @@
     {{-- Hero Section Dinamis --}}
     <section class="relative h-screen @yield('hero-bg') overflow-hidden">
         <div class="absolute inset-0 bg-opacity-50"></div>
-        <div class="relative z-10 flex items-center h-full px-4 sm:px-6 lg:px-10">
+        <div class="relative z-10 flex items-center h-full px-5 sm:px-5 lg:px-15">
             <h1 class="text-3xl font-extrabold text-white sm:text-3xl lg:text-6xl">
                 @yield('hero-title')
             </h1>

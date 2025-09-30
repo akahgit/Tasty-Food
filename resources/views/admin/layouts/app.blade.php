@@ -7,135 +7,195 @@
     <title>@yield('title') | Admin Dashboard</title>
     @vite('resources/css/app.css')
     <style>
-    .font-family-karla { font-family: karla; }    .bg-sidebar { 
-        background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+    .font-family-karla { font-family: karla; }
+    .bg-sidebar { 
+        background: #ffffff;
+        border-right: 1px solid #e5e7eb;
     }
-    .cta-btn { color: #3d68ff; }
-    .upgrade-btn { background: #1947ee; }
-    .upgrade-btn:hover { background: #0038fd; }
-    .active-nav-link { background: rgba(25, 71, 238, 0.9); }
-    .nav-item:hover { background: rgba(25, 71, 238, 0.8); }
-    .account-link:hover { color: #3d68ff; }
-</style>
+    .active-nav-link { 
+        background: #f3f4f6; 
+        color: blue;
+        border-right: 3px solid #6b7280;
+    }
+    .nav-item:hover { 
+        background: #f9fafb; 
+        color: blue;
+    }
+    .nav-item {
+        color: blue;
+        transition: all 0.2s ease;
+    }
+    .account-link:hover { 
+        color: blue; 
+    }
+    .mobile-overlay {
+        background: rgba(0, 0, 0, 0.5);
+    }
+    .sidebar-shadow {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    </style>
 
 </head>
 
-<body class="font-sans bg-gray-100">
+<body class="font-sans bg-gray-50">
 
-    <!-- Mobile Header -->
-    <header x-data="{ isOpen: false }" class="fixed top-0 z-20 w-full px-6 py-5 bg-sidebar sm:hidden">
-        <div class="flex items-center justify-between">
-            <a href="{{ route('admin.dashboard') }}" class="text-3xl font-semibold text-white uppercase">Admin</a>
-            <button @click="isOpen = !isOpen" class="text-white focus:outline-none">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-
-        <!-- Mobile Dropdown Nav -->
-        <nav x-show="isOpen" x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 transform -translate-y-4"
-            x-transition:enter-end="opacity-100 transform translate-y-0"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 transform translate-y-0"
-            x-transition:leave-end="opacity-0 transform -translate-y-4" class="pt-4 pb-6 bg-sidebar">
-            <a href="{{ route('admin.dashboard') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.dashboard') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-tachometer-alt"></i> Dashboard
-            </a>
-            <a href="{{ route('admin.about.edit') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.about.edit') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-sticky-note"></i> Tentang
-            </a>
-            <a href="{{ route('admin.news.index') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.news.*') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-align-left"></i> Berita
-            </a>
-            <a href="{{ route('admin.gallery.index') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.gallery.*') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-table"></i> Gallery
-            </a>
-            <a href="{{ route('admin.contact.index') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.contact.*') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-tablet-alt"></i> Kontak
-            </a>
-            <a href="{{ route('admin.map.edit') }}"
-               class="flex items-center py-2 pl-6 text-white rounded {{ request()->routeIs('admin.map.edit') ? 'active-nav-link' : 'opacity-75 hover:opacity-100' }} nav-item">
-               <i class="mr-3 fas fa-map-marked-alt"></i> Edit Maps
-            </a>
-            <a href="{{ route('frontend.index') }}" target="_blank"
-               class="flex items-center py-2 pl-6 text-white opacity-75 hover:opacity-100 nav-item">
-               <i class="mr-3 fas fa-external-link-alt"></i> Frontend
-            </a>
-
-            <!-- Logout di mobile -->
-            <form method="POST" action="{{ route('logout') }}" class="mt-4">
-                @csrf
-                <button type="submit"
-                    class="flex items-center w-full py-2 pl-6 text-white opacity-75 hover:opacity-100 nav-item">
-                    <i class="mr-3 fas fa-sign-out-alt"></i> Logout
+    <!-- Mobile Overlay -->
+    <div x-data="{ isOpen: false }" class="sm:hidden">
+        <!-- Mobile Header -->
+        <header class="fixed top-0 z-30 w-full px-4 py-4 bg-white border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <a href="{{ route('admin.dashboard') }}" class="text-xl font-semibold text-blue-800">Admin Dashboard</a>
+                <button @click="isOpen = !isOpen" class="p-2 text-blue-600 hover:text-blue-800 focus:outline-none">
+                    <i class="fas fa-bars text-lg"></i>
                 </button>
-            </form>
-        </nav>
-    </header>
-
-    <!-- Desktop Sidebar -->
-    <aside class="fixed inset-y-0 left-0 z-10 hidden w-64 shadow-xl bg-sidebar sm:block">
-        <div class="flex flex-col h-full">
-            <!-- Header -->
-            <div class="p-6">
-                <a href="{{ route('admin.dashboard') }}"
-                    class="text-3xl font-semibold text-white uppercase hover:text-gray-300">Admin</a>
             </div>
+        </header>
 
-            <!-- Nav -->
-            <nav class="flex-1 px-3 py-4 overflow-y-auto text-base font-semibold text-white">
-                <a href="{{ route('admin.dashboard') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-tachometer-alt"></i> Dashboard
-                </a>
-                <a href="{{ route('admin.about.edit') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.about.edit') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-sticky-note"></i> Tentang
-                </a>
-                <a href="{{ route('admin.news.index') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.news.*') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-align-left"></i> Berita
-                </a>
-                <a href="{{ route('admin.gallery.index') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.gallery.*') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-table"></i> Gallery
-                </a>
-                <a href="{{ route('admin.contact.index') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.contact.*') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-tablet-alt"></i> Kontak
-                </a>
-                <a href="{{ route('admin.map.edit') }}"
-                   class="flex items-center py-3 pl-6 rounded {{ request()->routeIs('admin.map.edit') ? 'bg-blue-700' : 'opacity-75 hover:opacity-100' }} nav-item">
-                   <i class="mr-3 fas fa-map-marked-alt"></i> Edit Maps
-                </a>
-                <a href="{{ route('frontend.index') }}" target="_blank"
-                   class="flex items-center py-3 pl-6 rounded opacity-75 hover:opacity-100 nav-item">
-                   <i class="mr-3 fas fa-external-link-alt"></i> Frontend
-                </a>
-            </nav>
+        <!-- Mobile Backdrop -->
+        <div x-show="isOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="isOpen = false"
+             class="fixed inset-0 z-40 mobile-overlay"></div>
 
-            <!-- Logout -->
-            <form method="POST" action="{{ route('logout') }}" class="p-3 border-t border-blue-500">
-                @csrf
-                <button type="submit"
-                    class="flex items-center w-full py-3 pl-6 text-white transition duration-200 opacity-75 hover:opacity-100 nav-item account-link hover:bg-blue-500">
-                    <i class="mr-3 fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
-        </div>
-    </aside>
+        <!-- Mobile Sidebar -->
+        <aside x-show="isOpen" 
+               x-transition:enter="transition ease-out duration-300"
+               x-transition:enter-start="transform -translate-x-full"
+               x-transition:enter-end="transform translate-x-0"
+               x-transition:leave="transition ease-in duration-200"
+               x-transition:leave-start="transform translate-x-0"
+               x-transition:leave-end="transform -translate-x-full"
+               class="fixed inset-y-0 left-0 z-50 w-64 bg-white sidebar-shadow">
+            
+            <div class="flex flex-col h-full">
+                <!-- Mobile Header -->
+                <div class="p-6 border-b border-gray-200">
+                    <a href="{{ route('admin.dashboard') }}" 
+                       class="text-xl font-semibold text-blue-800 hover:text-blue-600">Admin Dashboard</a>
+                </div>
 
-    <!-- Main Content -->
-    <main class="flex-1 min-h-screen bg-gray-100 sm:ml-64">
-        <div class="px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
-            @yield('content')
-        </div>
-    </main>
+                <!-- Mobile Nav -->
+                <nav class="flex-1 px-4 py-6 overflow-y-auto">
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-tachometer-alt text-sm"></i> Dashboard
+                    </a>
+                    <a href="{{ route('admin.about.edit') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.about.edit') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-sticky-note text-sm"></i> Tentang
+                    </a>
+                    <a href="{{ route('admin.news.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.news.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-align-left text-sm"></i> Berita
+                    </a>
+                    <a href="{{ route('admin.gallery.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.gallery.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-table text-sm"></i> Gallery
+                    </a>
+                    <a href="{{ route('admin.contact.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.contact.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-tablet-alt text-sm"></i> Kontak
+                    </a>
+                    <a href="{{ route('admin.map.edit') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.map.edit') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-map-marked-alt text-sm"></i> Edit Maps
+                    </a>
+                    <a href="{{ route('frontend.index') }}" target="_blank"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg nav-item">
+                       <i class="mr-3 fas fa-external-link-alt text-sm"></i> Frontend
+                    </a>
+                </nav>
+
+                <!-- Mobile Logout -->
+                <div class="p-4 border-t border-gray-200">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center w-full py-3 px-4 rounded-lg text-blue-400 hover:bg-blue-50 hover:text-blue-500">
+                            <i class="mr-3 fas fa-sign-out-alt text-sm"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Mobile Main Content -->
+        <main class="pt-16 min-h-screen bg-gray-50">
+            <div class="px-4 py-6">
+                @yield('content')
+            </div>
+        </main>
+    </div>
+
+    <!-- Desktop Layout -->
+    <div class="hidden sm:flex">
+        <!-- Desktop Sidebar -->
+        <aside class="fixed inset-y-0 left-0 z-10 w-64 bg-white sidebar-shadow">
+            <div class="flex flex-col h-full">
+                <!-- Header -->
+                <div class="p-6 border-b border-gray-200">
+                    <a href="{{ route('admin.dashboard') }}"
+                        class="text-xl font-semibold text-blue-800 hover:text-blue-600">Admin Tasty Food</a>
+                </div>
+
+                <!-- Nav -->
+                <nav class="flex-1 px-4 py-6 overflow-y-auto">
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-tachometer-alt text-sm"></i> Dashboard
+                    </a>
+                    <a href="{{ route('admin.about.edit') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.about.edit') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-sticky-note text-sm"></i> Tentang
+                    </a>
+                    <a href="{{ route('admin.news.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.news.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-align-left text-sm"></i> Berita
+                    </a>
+                    <a href="{{ route('admin.gallery.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.gallery.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-table text-sm"></i> Gallery
+                    </a>
+                    <a href="{{ route('admin.contact.index') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.contact.*') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-tablet-alt text-sm"></i> Kontak
+                    </a>
+                    <a href="{{ route('admin.map.edit') }}"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg {{ request()->routeIs('admin.map.edit') ? 'active-nav-link' : 'nav-item' }}">
+                       <i class="mr-3 fas fa-map-marked-alt text-sm"></i> Edit Maps
+                    </a>
+                    <a href="{{ route('frontend.index') }}" target="_blank"
+                       class="flex items-center py-3 px-4 mb-1 rounded-lg nav-item">
+                       <i class="mr-3 fas fa-external-link-alt text-sm"></i> Frontend
+                    </a>
+                </nav>
+
+                <!-- Logout -->
+                <div class="p-4 border-t border-indigo-200">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"
+                            class="flex items-center w-full py-3 px-4 rounded-lg nav-item account-link">
+                            <i class="mr-3 fas fa-sign-out-alt text-sm"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Desktop Main Content -->
+        <main class="flex-1 ml-64 min-h-screen bg-gray-50">
+            <div class="px-6 py-8 lg:px-10 lg:py-10">
+                @yield('content')
+            </div>
+        </main>
+    </div>
 
     <!-- AlpineJS -->
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>

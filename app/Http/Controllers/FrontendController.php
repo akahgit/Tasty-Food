@@ -31,7 +31,9 @@ class FrontendController extends Controller
     }
     public function gallery()
     {
-        $images = GalleryImage::orderBy('order')->get();
+        $images = GalleryImage::where('is_featured', true)
+        ->orderBy('order')
+        ->get();
         return view('frontend.pages.galery', compact('images'));
     }
     public function kontak()

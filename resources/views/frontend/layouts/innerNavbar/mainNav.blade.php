@@ -18,6 +18,26 @@
                 <li><a href="{{ route('kontak.create') }}" class="px-2 py-2 hover:text-gray-300">KONTAK</a></li>
             </ul>
 
+            <!-- 🔍 SEARCH BAR (Hanya tampil jika $showSearch = true) -->
+            @isset($showSearch)
+                @if($showSearch)
+                    <div class="ml-4">
+                        <!-- FORM SEARCH MENGARAH KE HALAMAN BERITA -->
+                        <form action="{{ route('frontend.berita') }}" method="GET" class="relative">
+                            <input type="text" 
+                                   name="q" 
+                                   value="{{ request()->query('q') }}"
+                                   placeholder="Cari berita..." 
+                                   class="pl-4 pr-10 py-2 w-48 border border-white/30 bg-white/10 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent text-sm text-white placeholder-white/50"
+                                   autocomplete="off">
+                            <button type="submit" class="absolute inset-y-0 right-0 px-3">
+                                <i class="fas fa-search text-white/50"></i>
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            @endisset
+
             <!-- Auth buttons -->
             <div class="flex items-center gap-2 ml-0 sm:ml-6">
                 @guest
@@ -57,6 +77,26 @@
                 <a href="{{ route('kontak.create') }}" class="px-4 py-3 font-sans text-white transition border-b border-transparent rounded-lg hover:text-white/70 hover:border-white/30 hover:bg-white/10">KONTAK</a>
             </div>
 
+            <!-- 🔍 SEARCH BAR MOBILE (Hanya tampil jika $showSearch = true) -->
+            @isset($showSearch)
+                @if($showSearch)
+                    <div class="mt-4">
+                        <!-- FORM SEARCH MENGARAH KE HALAMAN BERITA -->
+                        <form action="{{ route('frontend.berita') }}" method="GET" class="relative">
+                            <input type="text" 
+                                   name="q" 
+                                   value="{{ request()->query('q') }}"
+                                   placeholder="Cari berita..." 
+                                   class="w-full pl-4 pr-10 py-3 border border-white/30 bg-white/10 rounded-lg focus:ring-2 focus:ring-white/50 focus:border-transparent text-sm text-white placeholder-white/50"
+                                   autocomplete="off">
+                            <button type="submit" class="absolute inset-y-0 right-0 px-3">
+                                <i class="fas fa-search text-white/50"></i>
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            @endisset
+
             <!-- Auth Buttons -->
             <div class="flex flex-col gap-4 pt-6 mt-6 border-t border-white/30">
                 @guest
@@ -77,3 +117,57 @@
     </div>
     <div id="menu-overlay" class="fixed inset-0 z-10 hidden bg-black/50 sm:hidden"></div>
 </header>
+
+<!-- JavaScript untuk Toggle Menu -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuClose = document.getElementById('menu-close');
+    const navbarMenu = document.getElementById('navbar-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+
+    // Toggle mobile menu
+    function toggleMenu() {
+        navbarMenu.classList.toggle('hidden');
+        menuOverlay.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    // Event listeners
+    menuToggle.addEventListener('click', toggleMenu);
+    menuClose.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+
+    // Close menu when clicking a link
+    document.querySelectorAll('#navbar-menu a').forEach(link => {
+        link.addEventListener('click', toggleMenu);
+    });
+});
+</script>
+
+<!-- Style untuk aktif link -->
+<style>
+/* Highlight untuk link aktif */
+a.active {
+    color: #fbbf24; /* yellow-400 */
+    font-weight: 600;
+    border-bottom: 2px solid #fbbf24;
+}
+
+/* Responsive search width */
+@media (max-width: 640px) {
+    form .w-48 {
+        width: 100% !important;
+    }
+}
+
+/* Smooth transitions */
+#navbar-menu {
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(100%);
+}
+
+#navbar-menu:not(.hidden) {
+    transform: translateX(0);
+}
+</style>

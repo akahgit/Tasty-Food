@@ -85,26 +85,35 @@
                         </h3>
 
                         <!-- Preview gambar saat ini -->
-                        @if ($about->image_1)
-                            <div class="mb-4">
-                                <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
-                                <div class="relative group">
-                                    <img src="{{ asset('storage/about/' . $about->image_1) }}" alt="Gambar Visi"
-                                        class="w-full h-48 object-cover rounded-lg border border-gray-200">
-                                    <div
-                                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg">
-                                    </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
+                            
+                            @if($about->image_1)
+                                <div class="relative group mb-2">
+                                    <!-- PERHATIAN: Jangan pakai ternary dalam src karena sudah di-check di atas -->
+                                    <img src="{{ Storage::url('about/' . $about->image_1) }}" 
+                                         alt="Gambar Visi"
+                                         class="w-full h-48 object-cover rounded-lg border border-gray-200"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/default-image.jpg') }}';">
                                 </div>
-                            </div>
-                        @endif
+                                <p class="text-xs text-gray-500">
+                                    File: {{ $about->image_1 }}<br>
+                                    URL: {{ Storage::url('about/' . $about->image_1) }}
+                                </p>
+                            @else
+                                <div class="p-4 bg-gray-50 rounded-lg text-center border border-dashed border-gray-200">
+                                    <i class="fas fa-image text-gray-300 text-3xl mb-2"></i>
+                                    <p class="text-sm text-gray-500">Belum ada gambar</p>
+                                </div>
+                            @endif
+                        </div>
 
                         <!-- Upload baru -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 {{ $about->image_1 ? 'Ganti Gambar' : 'Upload Gambar' }}
                             </label>
-                            <div
-                                class="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
+                            <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
                                 <input type="file" name="image_1" accept="image/*"
                                     class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
                             </div>
@@ -126,26 +135,34 @@
                         </h3>
 
                         <!-- Preview gambar saat ini -->
-                        @if ($about->image_2)
-                            <div class="mb-4">
-                                <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
-                                <div class="relative group">
-                                    <img src="{{ asset('storage/about/' . $about->image_2) }}" alt="Gambar Misi"
-                                        class="w-full h-48 object-cover rounded-lg border border-gray-200">
-                                    <div
-                                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg">
-                                    </div>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
+                            
+                            @if($about->image_2)
+                                <div class="relative group mb-2">
+                                    <img src="{{ Storage::url('about/' . $about->image_2) }}" 
+                                         alt="Gambar Misi"
+                                         class="w-full h-48 object-cover rounded-lg border border-gray-200"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/default-image.jpg') }}';">
                                 </div>
-                            </div>
-                        @endif
+                                <p class="text-xs text-gray-500">
+                                    File: {{ $about->image_2 }}<br>
+                                    URL: {{ Storage::url('about/' . $about->image_2) }}
+                                </p>
+                            @else
+                                <div class="p-4 bg-gray-50 rounded-lg text-center border border-dashed border-gray-200">
+                                    <i class="fas fa-image text-gray-300 text-3xl mb-2"></i>
+                                    <p class="text-sm text-gray-500">Belum ada gambar</p>
+                                </div>
+                            @endif
+                        </div>
 
                         <!-- Upload baru -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 {{ $about->image_2 ? 'Ganti Gambar' : 'Upload Gambar' }}
                             </label>
-                            <div
-                                class="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
+                            <div class="border-2 border-dashed border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors">
                                 <input type="file" name="image_2" accept="image/*"
                                     class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100">
                             </div>

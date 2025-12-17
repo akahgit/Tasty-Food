@@ -10,10 +10,26 @@ use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
-    // Tampilkan semua foto
-    public function index()
+    public function index(Request $request)
     {
-        $images = GalleryImage::with('uploader')->orderBy('order')->get();
+        $query = GalleryImage::with('uploader')->orderBy('order');
+        
+        // Fitur pencarian
+        if ($request->has('search') && !empty($request->search)) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('caption', 'like', "%{$search}%")
+                  ->orWhere('image', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filter berdasarkan status
+        if ($request->has('status') && in_array($request->status, ['featured', 'draft'])) {
+            $query->where('is_featured', $request->status === 'featured');
+        }
+        
+        $images = $query->get();
+        
         return view('admin.gallery.index', compact('images'));
     }
 
@@ -64,13 +80,11 @@ class GalleryController extends Controller
             'caption' => 'nullable|string|max:255',
             'order' => 'nullable|integer',
             'image' => 'nullable|image|max:2048',
-            // Hapus validasi 'is_featured' => 'boolean' jika pakai hidden input
         ]);
 
         $image->caption = $request->caption;
         $image->order = $request->order ?? 0;
 
-        // ✅ Ambil nilai langsung, jangan pakai has()
         $image->is_featured = (bool) $request->input('is_featured', false);
 
         // Upload gambar baru
@@ -95,7 +109,6 @@ class GalleryController extends Controller
     {
         $image = GalleryImage::findOrFail($id);
 
-        // Hapus gambar dari storage
         if ($image->image && Storage::exists('public/gallery/' . $image->image)) {
             Storage::delete('public/gallery/' . $image->image);
         }

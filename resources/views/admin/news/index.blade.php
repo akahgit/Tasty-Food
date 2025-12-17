@@ -1,3 +1,26 @@
+@php
+    // Helper untuk highlight teks
+    if (!function_exists('highlightText')) {
+        function highlightText($text, $search) {
+            if (empty($search) || empty($text)) {
+                return $text;
+            }
+            
+            $searchTerms = explode(' ', $search);
+            $highlightedText = $text;
+            
+            foreach ($searchTerms as $term) {
+                if (strlen($term) > 2) {
+                    $pattern = '/(' . preg_quote($term, '/') . ')/i';
+                    $highlightedText = preg_replace($pattern, '<span class="bg-yellow-200 font-medium">$1</span>', $highlightedText);
+                }
+            }
+            
+            return $highlightedText;
+        }
+    }
+@endphp
+
 @extends('admin.layouts.app')
 
 @section('content')
@@ -35,16 +58,64 @@
 
         <!-- Tabel Berita -->
         <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
-            <!-- Header tabel dengan statistik -->
+            <!-- Header tabel dengan statistik dan pencarian -->
             <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="flex items-center space-x-4">
                         <h3 class="text-lg font-semibold text-gray-900">Daftar Berita</h3>
                         <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium">
-                            {{ count($news) }} artikel
+                            {{ $news->total() }} artikel
                         </span>
                     </div>
+                    
+                    <!-- Form Pencarian -->
+                    <form method="GET" action="{{ route('admin.news.index') }}" class="w-full sm:w-auto" id="searchForm">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" 
+                                       name="search" 
+                                       id="searchInput"
+                                       value="{{ request('search') }}"
+                                       placeholder="Cari judul atau isi berita..." 
+                                       class="pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent w-full sm:w-64"
+                                       autocomplete="off">
+                                
+                                <!-- Tombol Clear -->
+                                @if(request()->has('search') && !empty(request('search')))
+                                    <button type="button" 
+                                            onclick="clearSearch()"
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                @endif
+                            </div>
+                            
+                            <button type="submit"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium flex items-center justify-center">
+                                <i class="fas fa-search mr-2"></i>
+                                Cari
+                            </button>
+                        </div>
+                    </form>
                 </div>
+                
+                <!-- Info pencarian aktif -->
+                @if(request()->has('search') && !empty(request('search')))
+                    <div class="mt-3 flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-filter mr-2"></i>
+                            Hasil pencarian untuk: 
+                            <span class="font-medium ml-1">"{{ request('search') }}"</span>
+                        </div>
+                        <a href="{{ route('admin.news.index') }}" 
+                           class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center">
+                            <i class="fas fa-times mr-1"></i> Hapus filter
+                        </a>
+                    </div>
+                @endif
             </div>
 
             <!-- Tabel -->
@@ -78,7 +149,7 @@
                                 <!-- Nomor -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-500">
-                                        {{ $loop->iteration }}
+                                        {{ ($news->currentPage() - 1) * $news->perPage() + $loop->iteration }}
                                     </div>
                                 </td>
 
@@ -93,10 +164,23 @@
                                         <div class="flex-1 min-w-0">
                                             <p class="text-sm font-medium text-gray-900 truncate max-w-[200px]" 
                                                title="{{ $item->title }}">
-                                                {{ Str::limit($item->title, 40) }}
+                                                @if(request()->has('search') && !empty(request('search')))
+                                                    {!! highlightText($item->title, request('search')) !!}
+                                                @else
+                                                    {{ Str::limit($item->title, 40) }}
+                                                @endif
                                             </p>
                                             <p class="text-xs text-gray-500">
-                                                {{ Str::limit(strip_tags($item->excerpt ?? ''), 50) }}
+                                                @php
+                                                    // Generate excerpt dari content (50 karakter pertama)
+                                                    $excerptText = Str::limit(strip_tags($item->content), 50);
+                                                @endphp
+                                                
+                                                @if(request()->has('search') && !empty(request('search')))
+                                                    {!! highlightText($excerptText, request('search')) !!}
+                                                @else
+                                                    {{ $excerptText }}
+                                                @endif
                                             </p>
                                         </div>
                                     </div>
@@ -141,12 +225,28 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center space-x-2">
                                         <a href="{{ route('admin.news.edit', $item->id) }}"
-                                            class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium">
+                                            class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-sm font-medium"
+                                            title="Edit berita">
                                             <i class="fas fa-edit mr-1"></i>
                                             Edit
                                         </a>
+                                        <!-- PERBAIKAN: Gunakan route yang benar -->
+                                        @php
+                                            // Opsi 1: Jika menggunakan route frontend.berita.detail
+                                            $viewLink = route('frontend.berita.detail', $item->id);
+                                            
+                                            // Opsi 2: Jika berita menggunakan slug
+                                            // $viewLink = $item->slug ? route('frontend.berita.detail', $item->slug) : route('frontend.berita.detail', $item->id);
+                                        @endphp
+                                        <a href="{{ $viewLink }}" target="_blank"
+                                            class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                                            title="Lihat di frontend">
+                                            <i class="fas fa-external-link-alt mr-1"></i>
+                                            Lihat
+                                        </a>
                                         <button onclick="confirmDelete({{ $item->id }})"
-                                            class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium">
+                                            class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                                            title="Hapus berita">
                                             <i class="fas fa-trash mr-1"></i>
                                             Hapus
                                         </button>
@@ -164,28 +264,92 @@
                             <tr>
                                 <td colspan="6" class="px-6 py-12 text-center">
                                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="fas fa-newspaper text-gray-400 text-2xl"></i>
+                                        @if(request()->has('search') && !empty(request('search')))
+                                            <i class="fas fa-search text-gray-400 text-2xl"></i>
+                                        @else
+                                            <i class="fas fa-newspaper text-gray-400 text-2xl"></i>
+                                        @endif
                                     </div>
-                                    <h3 class="text-sm font-medium text-gray-900 mb-1">Belum ada berita</h3>
-                                    <p class="text-sm text-gray-500 mb-4">Mulai dengan membuat artikel pertama Anda</p>
-                                    <a href="{{ route('admin.news.create') }}"
-                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                                        <i class="fas fa-plus mr-2"></i>
-                                        Tambah Berita
-                                    </a>
+                                    @if(request()->has('search') && !empty(request('search')))
+                                        <h3 class="text-sm font-medium text-gray-900 mb-1">Tidak ditemukan</h3>
+                                        <p class="text-sm text-gray-500 mb-4">Tidak ada berita yang cocok dengan pencarian "{{ request('search') }}"</p>
+                                        <a href="{{ route('admin.news.index') }}"
+                                            class="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium">
+                                            <i class="fas fa-times mr-2"></i>
+                                            Tampilkan Semua Berita
+                                        </a>
+                                    @else
+                                        <h3 class="text-sm font-medium text-gray-900 mb-1">Belum ada berita</h3>
+                                        <p class="text-sm text-gray-500 mb-4">Mulai dengan membuat artikel pertama Anda</p>
+                                        <a href="{{ route('admin.news.create') }}"
+                                            class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            Tambah Berita Pertama
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Info pagination -->
+            @if($news->total() > 0)
+                <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 text-sm text-gray-600">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            Menampilkan {{ $news->firstItem() }} - {{ $news->lastItem() }} dari {{ $news->total() }} berita
+                        </div>
+                        <div class="mt-2 sm:mt-0">
+                            Halaman {{ $news->currentPage() }} dari {{ $news->lastPage() }}
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
-        <!-- Pagination jika ada -->
-        @if(method_exists($news, 'links'))
+        <!-- Pagination -->
+        @if($news->hasPages())
             <div class="mt-6">
-                {{ $news->links() }}
+                {{ $news->withQueryString()->links() }}
             </div>
         @endif
     </div>
+
+    <script>
+        function confirmDelete(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus berita ini?')) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        }
+        
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchForm').submit();
+        }
+        
+        // Auto submit setelah 3 karakter atau lebih
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    if (this.value.length >= 3 || this.value.length === 0) {
+                        this.form.submit();
+                    }
+                }, 800);
+            });
+            
+            // Enter untuk submit
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.form.submit();
+                }
+            });
+        });
+    </script>
 @endsection

@@ -7,14 +7,27 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 
 class NewsController extends Controller
 {
-    public function index()
-    {
-        $news = News::with('author')->latest()->get();
-        return view('admin.news.index', compact('news'));
+   public function index(Request $request)
+{
+    $query = News::with('author')->latest();
+    
+    // Fitur pencarian
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where(function($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+              ->orWhere('content', 'like', "%{$search}%");
+        });
     }
+    
+    $news = $query->paginate(10)->withQueryString();
+    
+    return view('admin.news.index', compact('news'));
+}
 
     public function create()
     {
